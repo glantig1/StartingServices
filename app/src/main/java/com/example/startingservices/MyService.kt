@@ -11,25 +11,24 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MyService : Service() {
-
+    var enter = 0
+    var startId = 0
     override fun onBind(intent: Intent): IBinder {
         TODO("Return the communication channel to the service.")
     }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        someTimer(100)
+        this.startId = startId
+        someTimer()
         return super.onStartCommand(intent, flags, startId)
     }
-    fun someTimer(time: Int){
+    fun someTimer(){
         val scope = CoroutineScope(Job() + Dispatchers.Default)
-
         scope.launch {
-            repeat(time){
-                Log.d("Count Down", (100 - it).toString())
+            repeat(enter){
+                Log.d("Count Down", (enter - it).toString())
                 delay(1000)
             }
-        }
-
-
+            stopSelf(startId)
+        }.start()
     }
 }
